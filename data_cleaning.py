@@ -1,45 +1,32 @@
 import pandas as pd
 import numpy as np
 
-# Load the dataset
 df = pd.read_csv('assessments.csv')
 
-# --- Step 1: Identify and Handle Missing Values ---
 print("--- Missing Values ---")
 print("Missing values before handling:")
 print(df.isnull().sum())
 
-# In the 'date' column, missing values likely indicate the date of an Exam.
-# We can fill these with a placeholder or decide to handle them differently
-# based on further analysis goals. For now, let's fill with NaN for clarity.
+
 df['date'] = df['date'].replace('', np.nan)
 
-# Convert 'date' to numeric, coercing errors to NaN
+
 df['date'] = pd.to_numeric(df['date'], errors='coerce')
 
 print("\nMissing values after initial handling:")
 print(df.isnull().sum())
 
-# Decide how to handle the remaining missing values in 'date'.
-# Since it's the exam date, we might keep it as NaN for now,
-# or if there's a pattern (e.g., exam usually happens after the last TMA),
-# we could try to impute based on 'code_presentation'.
-# For this basic cleaning, we'll leave them as NaN.
 
-# --- Step 2: Remove Duplicate Rows ---
 print("\n--- Duplicate Rows ---")
 print("Number of duplicate rows before removal:", df.duplicated().sum())
 
-# Remove duplicate rows
+
 df_cleaned = df.drop_duplicates()
 
 print("Number of duplicate rows after removal:", df_cleaned.duplicated().sum())
 print("Shape of DataFrame after removing duplicates:", df_cleaned.shape)
 
-# --- Step 3: Standardize Text Values (if applicable) ---
-# In this dataset, the text values in 'code_module', 'code_presentation',
-# and 'assessment_type' seem consistent in terms of case.
-# We can still apply a basic standardization to ensure no leading/trailing spaces.
+# --- Step 3: Standardize Text Values 
 
 print("\n--- Text Standardization ---")
 for col in ['code_module', 'code_presentation', 'assessment_type']:
@@ -48,14 +35,12 @@ for col in ['code_module', 'code_presentation', 'assessment_type']:
         print(f"Standardized column: {col}")
 
 # --- Step 4: Convert Date Formats ---
-# The 'date' column is already numeric (days after the start of the module).
-# If it were in a string date format, we would use pd.to_datetime().
-# No conversion needed here, but we handled missing values in the 'date' column earlier.
+
 
 print("\n--- Date Format Check ---")
 print("Data type of 'date' column:", df_cleaned['date'].dtype)
 
-# --- Step 5: Rename Column Headers ---
+#  Step 5: Rename Column Headers 
 print("\n--- Rename Column Headers ---")
 df_cleaned.rename(columns={'code_module': 'code_module',
                            'code_presentation': 'code_presentation',
@@ -70,7 +55,7 @@ print("\n--- Data Type Check ---")
 print("Data types before conversion:")
 print(df_cleaned.dtypes)
 
-# Convert 'weight' to numeric (it might have been read as object if there were issues)
+
 df_cleaned['weight'] = pd.to_numeric(df_cleaned['weight'], errors='coerce')
 
 print("\nData types after conversion:")
